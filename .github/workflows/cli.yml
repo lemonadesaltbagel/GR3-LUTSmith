@@ -1,0 +1,17 @@
+# Checks that need no RICOH file, on every push and pull request.
+name: checks
+on: [push, pull_request]
+jobs:
+  cli:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    env:
+      PYTHONUTF8: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - run: uv sync --locked --extra photo
+      - run: uv run python tests/test_cli.py
+      - run: uv run python gr3_lutsmith.py slots
